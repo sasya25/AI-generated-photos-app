@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Image Generation</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='image_generation.css') }}">
+</head>
+<body>
+    <h1>Image Generation and Posting</h1>
+    
+    <div class="container">
+        <h2>Generate Image from Text</h2>
+        <textarea id="text" placeholder="Enter text description"></textarea>
+        <button onclick="generateImage()">Generate Image</button>
+        <button onclick="postImage()">Post</button>
+        <img id="generatedImage" alt="Generated Image">
+    </div>
+
+    <script>
+        function generateImage() {
+
+            const inputText = document.getElementById('text').value;
+
+            const backendUrl = '/generate_image';
+
+            fetch(backendUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: inputText }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.image_url) {
+                    document.getElementById('generatedImage').src = data.image_url;
+                } else {
+                    alert('Error generating image. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while posting the image.');
+            });     
+    }
+
+    function postImage() {
+            const generatedImage = document.getElementById('generatedImage');
+            if (!generatedImage.src || generatedImage.src === 'placeholder_image.jpg') {
+                alert('Please generate an image first.');
+                return;
+            }
+
+            const backendUrl = '/post_image';
+
+            // Send the image URL to the backend using a POST request.
+            fetch(backendUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ imageUrl: generatedImage.src }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Image posted successfully.');
+                } else {
+                    alert('Failed to post image.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while posting the image.');
+            });
+        }
+
+    </script>
+</body>
+</html>

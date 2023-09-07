@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Photo Feed</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+</head>
+<body>
+    <h1>AI Photo Feed </h1>
+    <div class="form-container">
+        <form action="{{ url_for('generate_form') }}" method="GET">
+            <input type="submit" value="Post">
+        </form>
+        <form action="{{ url_for('logout') }}" method="GET">
+            <input type="submit" value="Logout">
+        </form>
+    </div>
+
+    <div class="photo-feed">
+        {% for photo in photos %}
+        <div class="photo">
+            <img src="{{ photo.url }}" alt="{{ photo.caption }}" width="300" height="300">
+            <p>{{ photo.caption }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
